@@ -92,7 +92,7 @@ Waiting for player to select an NPC for Communication...
 ```
 
 ## Requirements
-3. **Powerful Computer**: 1. You are running Fallout 4, I do this with PhyOp Performance textures for less system swap issues. 2.  fits in ~4GB for shared or Fallout 4 + system  and  free quantization.
+3. **Powerful Computer**: Running Fallout 4/Skyrim and interference on models can be intensive.
 1. **Python Environment**: Requires Python 3.11 and dependencies from the Mantella requirements file.
 2. **Language Model**: Use [Lewdiculous L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix](https://huggingface.co/Lewdiculous/L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix). Have, 4GB VRam Free for Q3 or 6GB VRam free for Q4. 
 3. **Operating System**: Compatible with Windows 7 through Windows 11; administrative privileges may be needed.
