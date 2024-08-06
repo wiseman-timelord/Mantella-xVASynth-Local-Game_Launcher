@@ -133,6 +133,7 @@ Quality: max_tokens = 200, max_response_sentences = 3, temperature = 0.6
 - Possibly requires advance of my project for utilizing llama.cpp pre-compiled binaries for vulkan, to host models with OhLlama/LmStudio compatibility for apps, as they are not utilizing threads properly or vulkan at all, currently.
 
 # Development
+- Now have skyrim again, and will be able to test/auto-optimize the character sheets based on context for, skyrim and fallout.
 - Need to add back the, "Forgiven" and "Offended", parts to the prompts, and re-write them in process, make them concise. Currently the convo just about works on q3.
 - Complete Mantella-WT-0.11.4.5.1 then re-brand and process into exe, upload to nexus.
 Ollama has no curl model folder/name request, I am trying things, apparently
