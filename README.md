@@ -19,7 +19,7 @@ Status: Project being re-planned. Notice: Some of the details are somewhat inacc
 - The menu of much simplified optimization...
 ```
 =======================================================================================================================
-                                          Mantella-WT Optimizer / Launcher
+                                               Mantella-Local-Launcher
 -----------------------------------------------------------------------------------------------------------------------
 
 
@@ -51,7 +51,7 @@ Selection, Program Options = 1-4, Refresh Display = R, Begin Mantella/xVASynth =
 - The general running of things...
 ```
 =======================================================================================================================
-                                          Mantella-xVASynth Optimizer/Launcher
+                                               Mantella-Local-Launcher
 ------------------------------------------------------------------------------------------------------------------------
 
 Working Dir: D:\GamesVR\Mantella-WT-0.11.4
