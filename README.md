@@ -93,7 +93,7 @@ Waiting for player to select an NPC for Communication...
 
 ## Requirements
 1. **Python Environment**: Requires Python 3.11 and dependencies from the Mantella requirements file.
-2. **Language Model**: Use [Lewdiculous L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix](https://huggingface.co/Lewdiculous/L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix) with Q3 or Q4 VRAM specifications.
+2. **Language Model**: Use [Lewdiculous L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix](https://huggingface.co/Lewdiculous/L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix) with, Q3 for ~4GB and free quantization.
 3. **Operating System**: Compatible with Windows 7 through Windows 11; administrative privileges may be needed.
 4. **xVASynth Installation**: Must be installed and correctly configured in the specified directory.
 5. **Configuration File**: Requires a `config.ini` with `Game`, `Paths`, and `LanguageModel.Advanced` sections.
