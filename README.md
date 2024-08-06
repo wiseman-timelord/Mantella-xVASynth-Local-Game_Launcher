@@ -69,25 +69,36 @@ Prompts Alrady Optimized.
 Reading config file...
 Read Keys: config.ini.
 Writing config file...
-Settings saved. Proceeding to run Mantella/xVASynth...
-Writing output file: exit_code=0, xvasynth_path=D:\GamesVR\xVASynth
-Output file written successfully: main-wt.txt
+Config file updated successfully.
+Saved File: config.ini
+Writing output file
+Output file written successfully: temp-wt.txt
+Saved File: temp-wt.txt
+Exiting, then Running Mantella/xVASynth...
 0,D:\GamesVR\xVASynth
 Final output: exit_code=0, xvasynth_path=D:\GamesVR\xVASynth
 Script execution ended
-...Mantella/xVASynth Optimizer-Launcher Closed...
+...Mantella/xVASynth Optimizer-Launcher Closed.
+Read File: temp-wt.txt
+Checking for Fallout4...
+f4se_loader.exe is not running. Starting Fallout4...
+Found and running f4se_loader.exe.
 Checking for xVASynth...
+xVASynth.exe is not running. Starting xVASynth...
 Running Mantella...
-Mantella-WT for Mantella version 0.11.4
-Mantella currently running for Fallout4 (D:\GamesVR\Fallout4_163).
-Mantella mod located in D:\GamesVR\Fallout4_163\Data.
-21:33:50.151 INFO: Running Mantella with local language model
-21:33:50.152 WARNING: L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix is using token_limit of 4096
-21:33:50.361 TTS: Connecting to xVASynth...
-21:33:50.510 STT: Audio threshold set to 'auto'. Adjusting microphone for ambient noise...
-21:33:50.510 STT: If mic input too low, edit audio_threshold value manually in .\config.ini.
-Need help? See here: https://art-from-the-machine.github.io/Mantella/pages/issues_qna
-Waiting for player to select an NPC for Communication...
+Mantella currently running for Fallout4 (D:\GamesVR\Fallout4_163). Mantella mod located in D:\GamesVR\Fallout4_163\Data
+19:55:00.415 INFO: Running Mantella with local language model
+Could not find number of available tokens for L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix. Defaulting to token count of 4096 (this number can be changed via the `custom_token_count` setting in config.ini)
+19:55:00.416 WARNING: Local language model has a low token count of 4096. For better NPC memories, try changing to a model with a higher token count
+
+Mantella v0.11.4
+19:55:00.623 TTS: Connecting to xVASynth...
+
+"NPC not added. Please try again after your next response"? See here:
+https://art-from-the-machine.github.io/Mantella/pages/issues_qna
+
+Waiting for player to select an NPC...
+
 
 ```
 
