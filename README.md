@@ -122,6 +122,7 @@ Quality: max_tokens = 200, max_response_sentences = 3, temperature = 0.6
 - Possibly requires advance of my project for utilizing llama.cpp pre-compiled binaries for vulkan, to host models with OhLlama/LmStudio compatibility for apps, as they are not utilizing threads properly or vulkan at all, currently.
 
 # Development
+- Need to add back the, "Forgiven" and "Offended", parts to the prompts, and re-write them in process, make them concise. Currently the convo just about works on q3.
 - Complete Mantella-WT-0.11.4.5.1 then re-brand and process into exe, upload to nexus.
 Ollama has no curl model folder/name request, I am trying things, apparently
 - Its looking likely, I have determined how to correctly process the character files pre-launce, to the context, and thus, no modified game files are required for deployment, this then becomes the launcher. so the forked files would be gone. it would become a standalone exe, it will be put on, Github repository and nexus, as Mantella-Launcher.
