@@ -325,7 +325,7 @@ def check_and_update_prompts():
 def display_title():
     os.system('cls' if os.name == 'nt' else 'clear')
     print("=" * 119)
-    print("                                          Mantella-WT Optimizer/Launcher")
+    print("                                               Mantella-Local-Launcher")
     print("-" * 119)
     print(f"")
     
