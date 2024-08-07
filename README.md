@@ -131,11 +131,10 @@ Quality: max_tokens = 200, max_response_sentences = 3, temperature = 0.6
 - No GPT/Online support! Despite loving GPT for other things, GPT will always be filtered response, despite being fast. I cant see it being used when there are local models able to produce SFW AND NSFW contents in one model and process text, I consider, Fallout4 and Skyrim, to be *Ahem* Offline Games with a little tweaking, unless you have like of achievements otherwise known as character profiling. 
 
 # Development
-- Character sheet must be backed up, and then backup must be used to dynamically in relevance to the context size chosen, be filtered to contain, 2048 = 1 sentences, 4096 = 2 sentences, 8192 = 4 sentences, context lengths should be either, 2048, 4096, 8192, I dont see any popular RP models for 16384, apart from book-writing.   
+- Character sheet must be backed up  "gamename_characters.bak", and then backup must be used to dynamically in relevance to the context size chosen, be filtered to contain, 2048 = 1 sentences, 4096 = 2 sentences, 8192 = 4 sentences, context lengths should be either, 2048, 4096, 8192, process the gamename_characters.csv according to the current context settings for context, and over-write any existing csv file. 
+- Ollama has no curl model folder/name request, I am trying things. 
 - Now have skyrim again, and will be able to test/auto-optimize the character sheets based on context for, skyrim and fallout.
-- Complete Mantella-WT-0.11.4.5.1 then re-brand and process into exe, upload to nexus. Ollama has no curl model folder/name request, I am trying things.
-- Its looking likely, I have determined how to correctly process the character files pre-launce, to the context, and thus, no modified game files are required for deployment, this then becomes the launcher. so the forked files would be gone. it would become a standalone exe, it will be put on, Github repository and nexus, as Mantella-Launcher.
-1. last thing from the original outline: develop my program to standardize the character csv files, it needs to generate 3 files, 1/2/3 sentence versions, that will be used, relevantly and dynamically, with the context lengths of, 2048, 4096, 8192. What would be simpler is, I could rename the files, ie "gamename_characters.bak", then process it according to the current context settings for context, and over-write any existing csv file in the same dir, so as, to not need a bunch of modifications to, 3 scripts to make them dynamic.
+- get all of the code accurately into the python script, and compile into exe, and upload to nexus. 
 2. Ollama does not have a curl requires, but we know it running or not by "ollama.exe". From command "Ollama Ps", we can find this...
 ```
 NAME                    ID              SIZE    PROCESSOR       UNTIL
