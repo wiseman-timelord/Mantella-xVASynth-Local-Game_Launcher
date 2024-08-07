@@ -1,9 +1,8 @@
 # Mantella-Local-Launcher
-Status: Project being re-planned. Notice: Some of the details are somewhat inaccurate, at-least until the next release.
+Status: Release, now supporting Ollama.
 
 ### Description
-- a Windows Launcher/Optimizer for Mantella for, Fallout 4 and Skyrim, with models locally on Windows. I found Mantella was optimized for 8K on GPT, so, Mantella-Local-Launcher instead optimizes Mantella for Local Models. The script facilitates pre-launch, configuration management and optimization, launches, xVASynth and your chosen game, if they are not already running, then it launches Mantella, by making use of the settings already present in `config.ini`, so you do still need to configure that first. Mantella-WT also performs various tasks such as, cleaning configuration files and optimizing the mantella prompts. The Batch file manages the, communication between and launching, of the relevant programs/scripts, while the Python component of the script handles the heavy work, and displays an interactive menu for user selection of game and optimization options.
-- Note, this project only currently supports LM Studio, however, it has been figured out to be possible to obtain the model folder, and am working on this.
+- a Windows Launcher/Optimizer for Mantella for, Fallout 4 and Skyrim, with models locally on Windows. I found Mantella was optimized for 8K on GPT, so, Mantella-Local-Launcher instead optimizes Mantella for Local Models. The script facilitates pre-launch, configuration management and optimization, launches, xVASynth and your chosen game, if they are not already running, then it launches Mantella, by making use of the settings already present in `config.ini`, so you do still need to configure that first. Mantella-Local-Launcher also performs various tasks such as, cleaning configuration files and optimizing the mantella prompts. The Batch file manages the, communication between and launching, of the relevant programs/scripts, while the Python component of the script handles the heavy work, and displays an interactive menu for user selection of game and optimization options. The project is local only, so, gpt/online, compatibility and optimization, remains untested. 
 
 # Features
 1. **Batch Launcher for Automation**: Automates and runs xVASynth and Mantella with admin privileges.
@@ -12,7 +11,7 @@ Status: Project being re-planned. Notice: Some of the details are somewhat inacc
 4. **Interactive Python Script**: Cleans configuration files and offers an interactive menu for game and preset choices.
 5. **Error Handling and Logging**: Tracks errors, logs execution, and backs up configuration files.
 6. **Automatic Execution and Exit Handling**: If not already running, then runs, Fallout 4 and/or xVASynth, and then continues to Mantella for smooth operation.
-7. **LM Studio Enhanced/Specific**: Switching models in LM Studio is detected, and then automatically updated in `config.ini`. 
+7. **LM Studio / Ollama Support **: Switch models to similar one with different name, and it is handled by the launcher in `config.ini`. 
 
 # Preview
 - The menu of much simplified optimization...
@@ -131,16 +130,11 @@ Quality: max_tokens = 200, max_response_sentences = 3, temperature = 0.6
 - No GPT/Online support! Despite loving GPT for other things, GPT will always be filtered response, despite being fast. I cant see it being used when there are local models able to produce SFW AND NSFW contents in one model and process text, I consider, Fallout4 and Skyrim, to be *Ahem* Offline Games with a little tweaking, unless you have like of achievements otherwise known as character profiling. 
 
 # Development
+- Ensure the launcher is future proof, by having alternate method to update the relevant config prompts, this will involve acceesing the new config scripts, there are multiple look in the src folder.
 - Character sheet must be backed up  "gamename_characters.bak", and then backup must be used to dynamically in relevance to the context size chosen, be filtered to contain, 2048 = 1 sentences, 4096 = 2 sentences, 8192 = 4 sentences, context lengths should be either, 2048, 4096, 8192, process the gamename_characters.csv according to the current context settings for context, and over-write any existing csv file. 
-- Ollama has no curl model folder/name request, I am trying things. 
+- There needs to be a Yaml ".\data\temporary_launcher.yaml", to remember the user's selection of drive for the models, then it will just use that entry from then on. 
 - Now have skyrim again, and will be able to test/auto-optimize the character sheets based on context for, skyrim and fallout.
 - get all of the code accurately into the python script, and compile into exe, and upload to nexus. 
-2. Ollama does not have a curl requires, but we know it running or not by "ollama.exe". From command "Ollama Ps", we can find this...
-```
-NAME                    ID              SIZE    PROCESSOR       UNTIL
-qwen2_57b:latest        9dbf41c98d9e    48 GB   100% CPU        4 minutes from now
-```
-...there is the model name, so we can search the host computer for "qwen2_57b", to find the folder it is in, it will stop on the first one it finds. I would think, that commonly, people would have their models in one location, not duplicated. If we can implement this, then Mantella-Local will be able to support ALL local features. Obviously, it should first check if both Ollama AND LM Studio are running, and if so, then ask the user to choose which one they are using. If multiple models are hosted on ollama/lm studio, then the user should be prompted to choose.
 3. requires re-assessment of what is a "Required number of Tokens" for llama 3 level, as noticed it was generating at 1 token per word.
 4. Launcher GUI.
 
