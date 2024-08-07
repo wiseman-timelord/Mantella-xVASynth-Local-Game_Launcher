@@ -31,35 +31,52 @@ if not exist ".\config.bak" (
     echo First Run, Fool-Proofing Mantella..
     timeout /t 1 >nul
     pip install -r requirements.txt
-	echo ..Requirements Installed ^(Hopefully^).
-	timeout /t 2 >nul
+    echo ..Requirements Installed ^(Hopefully^).
+    timeout /t 2 >nul
 )
 echo Note: 'config.bak' Retains Instructions.
 
-:: Check if LM Studio is running
-tasklist /FI "IMAGENAME eq LM Studio.exe" 2>NUL | find /I /N "LM Studio.exe">NUL
+:: Check if LM Studio or Ollama is running, act appropriately.
+tasklist /FI "IMAGENAME eq LM Studio.exe" 2>NUL | find /I /N "LM Studio.exe" >NUL
 if "%ERRORLEVEL%" EQU "0" (
     set "LM_RUNNING=1"
 ) else (
     set "LM_RUNNING=0"
 )
 
-:: Determine service status and save to temp-wt.txt
-if "%LM_RUNNING%"=="1" (
-    echo service=lmstudio > temp-wt.txt
-	echo LM Studio Status: Running 
+tasklist /FI "IMAGENAME eq ollama.exe" 2>NUL | find /I /N "ollama.exe" >NUL
+if "%ERRORLEVEL%" EQU "0" (
+    set "OLLAMA_RUNNING=1"
 ) else (
-    echo Error: LM Studio Must Be Running.
-    echo Load the Language Model In LM Studio, and Try Again.
-    timeout /t 5 >nul
-    popd
-    exit /b
+    set "OLLAMA_RUNNING=0"
+)
+
+if "%LM_RUNNING%"=="1" (
+    if "%OLLAMA_RUNNING%"=="1" (
+        echo Error: Multiple Model Servers
+        echo Please run, Ollama or LM Studio, not both
+        timeout /t 3 >nul
+        goto :eof
+    ) else (
+        echo service=lmstudio > temp-wt.txt
+        echo LM Studio Status: Running
+        timeout /t 1 >nul
+    )
+) else if "%OLLAMA_RUNNING%"=="1" (
+    echo service=ollama > temp-wt.txt
+    echo Ollama Status: Running
+    timeout /t 1 >nul    
+) else (
+    echo Error: Neither LM Studio nor Ollama is running.
+    echo Load one of the Language Models and try again.
+    timeout /t 3 >nul
+    goto :eof
 )
 
 :: Run the Python script for config cleaning and menu
-echo Running Mantella-WT Optimizer-Launcher...
+echo Running Mantella-Local-Launcher...
 python launcher.py
-echo ...Mantella/xVASynth Optimizer-Launcher Closed.
+echo ...Mantella-Local-Launcher Closed.
 timeout /t 1 >nul
 
 :: Read the output values from temp-wt.txt
@@ -73,7 +90,7 @@ echo Read File: temp-wt.txt
 timeout /t 1 >nul
 if "%exit_code%" equ "1" (
     echo Exit and Save Complete. 
-    goto eof:
+    goto :eof
 )
 timeout /t 1 >nul
 
@@ -81,45 +98,39 @@ timeout /t 1 >nul
 echo Checking for %game%...
 if "%game%"=="Fallout4" (
     if exist "%game_folder%\f4se_loader.exe" (
-        set "game_exe=f4se_loader.exe"
-    ) else (
+        set "game_se=f4se_loader.exe"
         set "game_exe=Fallout4.exe"
     )
 ) else if "%game%"=="Fallout4VR" (
     if exist "%game_folder%\f4sevr_loader.exe" (
-        set "game_exe=f4sevr_loader.exe"
-    ) else (
+        set "game_se=f4sevr_loader.exe"
         set "game_exe=Fallout4VR.exe"
     )
 ) else if "%game%"=="Skyrim" (
     if exist "%game_folder%\skse64_loader.exe" (
-        set "game_exe=skse64_loader.exe"
-    ) else (
+        set "game_se=skse64_loader.exe"
         set "game_exe=SkyrimSE.exe"
     )
 ) else if "%game%"=="SkyrimVR" (
     if exist "%game_folder%\sksevr_loader.exe" (
-        set "game_exe=sksevr_loader.exe"
-    ) else (
+        set "game_se=sksevr_loader.exe"
         set "game_exe=SkyrimVR.exe"
     )
 )
-
 tasklist /FI "IMAGENAME eq %game_exe%" 2>NUL | find /I /N "%game_exe%">NUL
 if "%ERRORLEVEL%" NEQ "0" (
     echo %game_exe% is not running. Starting %game%...
     if exist "%game_folder%\%game_exe%" (
         pushd "%game_folder%"
-        echo Found and running %game_exe%.
+        echo Found %game_exe%, running %game_se%.
         timeout /t 1 >nul
-        powershell -Command "Start-Process '%game_folder%\%game_exe%' -NoNewWindow"
+        powershell -Command "Start-Process '%game_folder%\%game_se%' -NoNewWindow"
         popd
     ) else (
-        echo Error: %game_exe% not found at %game_folder%
-        echo Please check your config.ini file and ensure the game folder path is correct.
-        timeout /t 10 >nul
-        popd
-        exit /b
+        echo Error: %game_se% not found at %game_folder%
+        echo Check, config.ini game path and Script Extender presence.
+        timeout /t 3 >nul
+        goto :eof
     )
     timeout /t 3 >nul
 )
@@ -134,11 +145,10 @@ if "%ERRORLEVEL%" NEQ "0" (
         powershell -Command "Start-Process '%xvasynth_folder%\xVASynth.exe'"
         popd
     ) else (
-        echo Error: xVASynth.exe not found at %xvasynth_folder%
-        echo Please check your config.ini file and ensure the xvasynth_folder path is correct.
-        timeout /t 10 >nul
-        popd
-        exit /b
+        echo Error: xVASynth.exe not found.
+        echo Check config.ini xvasynth path validity.
+        timeout /t 3 >nul
+        goto :eof
     )
     timeout /t 3 >nul
 )
@@ -152,13 +162,14 @@ python .\main.py
 
 :: Cleanup and exit
 echo Mantella Exited.
-timeout /t 10 >nul
+timeout /t 1 >nul
 
 :eof
 :: Exit Program
 del .\temp-wt.txt
 echo File Deleted: temp-wt.txt
+timeout /t 1 >nul
 pushd "%ScriptDirectoryWt%"
 echo Closing in 5 seconds...
-rem timeout /t 5 >nul
+timeout /t 5 >nul
 exit /b
