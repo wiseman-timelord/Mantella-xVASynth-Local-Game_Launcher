@@ -268,21 +268,21 @@ def check_and_update_prompts():
     ]
 
     updated_prompts = {
-        "skyrim_prompt": "You are {name} from Skyrim. this is your background: {bio}, stay in character. You are having a conversation with {player_name}, in {location} and in Skyrim and at {time_group} time. The situation so far is... {conversation_summary}.  In, {language} and a maximum of 100 tokens, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If {player_name}, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
+        "skyrim_prompt": "You are {name} from Skyrim. this is your background: {bio}, stay in character. You are having a conversation with the Player, in {location} and in Skyrim and at {time_group} time. The situation so far is... {conversation_summary}. In, {language} and a maximum of 100 tokens, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
         
-        "skyrim_multi_npc_prompt": "The following is a conversation between, {names} from Skyrim and {player_name}, in {location} and at {time_group} time. Their backgrounds are: {bios}, utilize all characters and stay in character. Their conversation histories: {conversation_summaries}. In, {language} and a maximum of 150 tokens, respond in multiple sentence as {names}, ensuring 1 sentence response from each of them. If {player_name}, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
+        "skyrim_multi_npc_prompt": "The following is a conversation between, {names} from Skyrim and the Player, in {location} and at {time_group} time. Their backgrounds are: {bios}, utilize all characters and stay in character. Their conversation histories: {conversation_summaries}. In, {language} and a maximum of 150 tokens, respond in multiple sentences as {names}, ensuring 1 sentence response from each of them. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
         
-        "fallout4_prompt": "You are {name} from Fallout 4, this is your background: {bio}, stay in character. You're having a conversation with {player_name} in {location}. The time is {time_group} time. The situation so far is... {conversation_summary}.  In, {language} and a maximum of 100 tokens, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If {player_name}, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
+        "fallout4_prompt": "You are {name} from Fallout 4, this is your background: {bio}, stay in character. You're having a conversation with the Player in {location}. The time is {time_group} time. The situation so far is... {conversation_summary}. In, {language} and a maximum of 100 tokens, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
         
-        "fallout4_multi_npc_prompt": "The following is a conversation between, {names} from Fallout 4 and {player_name}, in {location} and at {time_group} time. Their backgrounds are: {bios}, utilize all characters and stay in character. Their conversation histories: {conversation_summaries}. In, {language} and a maximum of 150 tokens, respond in multiple sentence as {names}, ensuring 1 sentence response from each of them. If {player_name}, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
+        "fallout4_multi_npc_prompt": "The following is a conversation between, {names} from Fallout 4 and the Player, in {location} and at {time_group} time. Their backgrounds are: {bios}, utilize all characters and stay in character. Their conversation histories: {conversation_summaries}. In, {language} and a maximum of 150 tokens, respond in multiple sentences as {names}, ensuring 1 sentence response from each of them. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
         
-        "radiant_start_prompt": "Start or continue, a conversation relevant to, {name} and {player_name} and {game},  skip past any greetings. In, {language} and a maximum of 150 tokens, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If {player_name}, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
+        "radiant_start_prompt": "Start or continue, a conversation relevant to, {name} and the Player and {game}, skip past any greetings. In, {language} and a maximum of 150 tokens, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
         
-        "radiant_end_prompt": "In, {language} and a maximum of 100 tokens, wrap up the current topic naturally. No need for formal goodbyes as no one is leaving. Keepthe summary concise, and remember narration ONLY, do not use, symbols such as asterisks or describe actions, in your output.", 
+        "radiant_end_prompt": "In, {language} and a maximum of 100 tokens, wrap up the current topic naturally. No need for formal goodbyes as no one is leaving. Keep the summary concise, and remember narration ONLY, do not use, symbols such as asterisks or describe actions, in your output.", 
         
-        "memory_prompt": "In, {language} and a maximum of 200 tokens, summarize the conversation between, {name} and {player_name} and other NPCs present, capturing the essence of in-game events. Ignore communication mix-ups like mishearings. Keep the summary concise, and remember narration ONLY, do not use, symbols such as asterisks or describe actions, in your output.", 
+        "memory_prompt": "In, {language} and a maximum of 200 tokens, summarize the conversation between, {name} and the Player and other NPCs present, capturing the essence of in-game events. Ignore communication mix-ups like mishearings. Keep the summary concise, and remember narration ONLY, do not use, symbols such as asterisks or describe actions, in your output.", 
         
-        "resummarize_prompt": "In {language} and with a maximum of 500 text characters and in single short paragraphs, summarize the conversation history between {name} (assistant) and {player_name} (user)/others in {game}. Each paragraph is a separate conversation. Keep the summary concise, and remember narration ONLY, do not use, symbols such as asterisks or describe actions, in your output."
+        "resummarize_prompt": "In {language} and with a maximum of 500 text characters and in single short paragraphs, summarize the conversation history between {name} (assistant) and the Player (user)/others in {game}. Each paragraph is a separate conversation. Keep the summary concise, and remember narration ONLY, do not use, symbols such as asterisks or describe actions, in your output."
     }
 
     needs_update = False
@@ -296,20 +296,10 @@ def check_and_update_prompts():
                 verbose_print(f"Prompt key '{key}' not found in config. Will update.")
                 needs_update = True
                 break
-            elif config['Prompt'][key].strip() != updated_prompts[key].strip():
+            elif len(config['Prompt'][key].strip()) != len(updated_prompts[key].strip()):
                 verbose_print(f"Prompt '{key}' needs updating.")
                 verbose_print(f"Current: {config['Prompt'][key]}")
                 verbose_print(f"Updated: {updated_prompts[key]}")
-                if key == "resummarize_prompt":
-                    verbose_print("Detailed comparison of resummarize_prompt:")
-                    current = config['Prompt'][key].strip()
-                    updated = updated_prompts[key].strip()
-                    verbose_print(f"Length of current: {len(current)}")
-                    verbose_print(f"Length of updated: {len(updated)}")
-                    for i, (c, u) in enumerate(zip(current, updated)):
-                        if c != u:
-                            verbose_print(f"Difference at position {i}: '{c}' vs '{u}'")
-                            break
                 needs_update = True
                 break
 
@@ -328,6 +318,7 @@ def check_and_update_prompts():
     else:
         verbose_print("Prompts Already Optimized.")
         delay(1)
+
 
 def display_title():
     os.system('cls' if os.name == 'nt' else 'clear')
