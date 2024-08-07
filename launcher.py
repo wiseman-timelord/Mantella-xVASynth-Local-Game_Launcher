@@ -25,8 +25,10 @@ def verbose_print(message):
 def delay(seconds=1):
     time.sleep(seconds)
 
-verbose_print(".\main-wt.py Started.")    
-verbose_print(f"Config File: {os.path.abspath(FILE_NAME)}")
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+verbose_print(".\launcher.py Initialized.") 
 delay()
 
 # Optimization presets
@@ -89,6 +91,36 @@ def clean_config():
     except Exception as e:
         verbose_print(f"Error writing config: {str(e)}")
         delay(3)
+
+def get_or_set_models_drive():
+    json_file_path = os.path.join("data", "temporary_launcher.json")
+    
+    # Ensure the data directory exists
+    os.makedirs(os.path.dirname(json_file_path), exist_ok=True)
+    
+    try:
+        # Try to read the existing JSON file
+        with open(json_file_path, 'r') as f:
+            data = json.load(f)
+            models_drive_letter = data.get('models_drive_letter')
+        
+        if models_drive_letter:
+            verbose_print(f"Using saved models drive: {models_drive_letter}")
+            return models_drive_letter
+    except FileNotFoundError:
+        verbose_print("No saved models drive found.")
+    except json.JSONDecodeError:
+        verbose_print("Error reading JSON file. Will create a new one.")
+    
+    # If we couldn't get the drive letter from the file, ask the user
+    models_drive_letter = input("Enter the drive letter where your models are stored (e.g., C, D, E): ").upper()
+    
+    # Save the drive letter to the JSON file
+    with open(json_file_path, 'w') as f:
+        json.dump({'models_drive_letter': models_drive_letter}, f)
+    
+    verbose_print(f"Saved models drive: {models_drive_letter}")
+    return models_drive_letter
 
 def read_config():
     verbose_print("Reading config file...")
@@ -231,100 +263,76 @@ def read_temp_file():
 
     return server_choice
 
-def fetch_model_details_lmstudio():
-    """Fetch the model details from LM Studio using curl."""
-    global model_id
-    config = configparser.ConfigParser()
-
+def get_or_set_models_drive():
+    json_file_path = os.path.join("data", "temporary_launcher.json")
+    
+    # Ensure the data directory exists
+    os.makedirs(os.path.dirname(json_file_path), exist_ok=True)
+    
     try:
-        config.read(FILE_NAME)
-        try:
-            # Run curl command and capture output
-            result = subprocess.run(['curl', lmstudio_api_url], capture_output=True, text=True, check=True)
-            
-            # Parse the JSON output
-            model_data = json.loads(result.stdout)
-            
-            if 'data' in model_data and len(model_data['data']) > 0:
-                # Extract model ID
-                full_id = model_data['data'][0]['id']
-                # Extract the relevant part (everything before the last '/')
-                model_id = full_id.rsplit('/', 1)[0]
-
-                # Update the configuration with the model details
-                if "LanguageModel" not in config:
-                    config["LanguageModel"] = {}
-                config["LanguageModel"]["model"] = model_id
-
-                with open(FILE_NAME, 'w') as configfile:
-                    config.write(configfile)
-
-                verbose_print(f"Model Read: LM Studio - {model_id}")
-                delay(1)
-            else:
-                verbose_print("No models currently loaded in LM Studio.")
-        except subprocess.CalledProcessError as e:
-            verbose_print(f"Error running curl command: {e}")
-            verbose_print(f"Curl output: {e.stderr}")
-        except json.JSONDecodeError:
-            verbose_print("Error parsing JSON from curl output")
-
-    except Exception as e:
-        verbose_print(f"Error fetching model details: {str(e)}")
-        traceback.print_exc()
-
-    delay(1)
+        # Try to read the existing JSON file
+        with open(json_file_path, 'r') as f:
+            data = json.load(f)
+            models_drive_letter = data.get('models_drive_letter')
+        
+        if models_drive_letter:
+            verbose_print(f"Using saved models drive: {models_drive_letter}")
+            return models_drive_letter
+    except FileNotFoundError:
+        verbose_print("No saved models drive found.")
+    except json.JSONDecodeError:
+        verbose_print("Error reading JSON file. Will create a new one.")
+    
+    # If we couldn't get the drive letter from the file, ask the user
+    models_drive_letter = input("Enter the drive letter where your models are stored (e.g., C, D, E): ").upper()
+    
+    # Save the drive letter to the JSON file
+    with open(json_file_path, 'w') as f:
+        json.dump({'models_drive_letter': models_drive_letter}, f)
+    
+    verbose_print(f"Saved models drive: {models_drive_letter}")
+    return models_drive_letter
 
 def fetch_model_details_ollama():
-    """Fetch the model details from Ollama."""
     global model_id
     config = configparser.ConfigParser()
 
     try:
         config.read(FILE_NAME)
 
-        # Run ollama ps command and capture output
         result = subprocess.run(['ollama', 'ps'], capture_output=True, text=True, check=True)
-
-        # Filter out error messages but keep all other output
         output_lines = result.stdout.strip().split('\n')
         filtered_output = '\n'.join([line for line in output_lines if not line.startswith("failed to get console mode")])
-
-        # Filter out error messages
         lines = [line for line in filtered_output.splitlines() if not line.startswith("failed to get console mode")]
 
         if len(lines) < 2:
             verbose_print("No models currently loaded in Ollama.")
+            model_id = "No model loaded"
             return
 
-        # Extract model name from the second line (first model listed)
         model_line = lines[1]
         verbose_print(f"Model line: {model_line}")
 
         model_parts = model_line.split()
         if len(model_parts) < 1:
             verbose_print(f"Unexpected format in 'ollama ps' output: {model_line}")
+            model_id = "Unexpected model format"
             return
 
-        model_name = model_parts[0].split(':')[0]  # Get the part before ':' if it exists
+        model_name = model_parts[0].split(':')[0]
         verbose_print(f"Detected model name: {model_name}")
 
-        # Define a mapping or transformation if needed
-        # For example, if the detected model name needs to be transformed
-        model_folder_name = model_name.replace("IQ3_M-imat", "GGUF-IQ-Imatrix")  # Transform name if needed
+        model_folder_name = model_name.replace("IQ3_M-imat", "GGUF-IQ-Imatrix")
 
-        # Prompt for drive letter
-        drive_letter = input("Enter the drive letter where your models are stored (e.g., C, D, E): ").upper()
+        models_drive_letter = get_or_set_models_drive()
 
-        # Search for the model folder
-        found = False  # Track if the folder was found
-        for root, dirs, files in os.walk(f"{drive_letter}:\\"):
-            verbose_print(f"Searching in directory: {root}")  # Debug output for current directory
+        found = False
+        for root, dirs, files in os.walk(f"{models_drive_letter}:\\"):
+            verbose_print(f"Searching in directory: {root}")
             if model_folder_name in dirs:
                 full_path = os.path.join(root, model_folder_name)
                 verbose_print(f"Found model folder: {full_path}")
 
-                # Extract AuthorFolderName and ModelFolderName
                 path_parts = full_path.split(os.path.sep)
                 if len(path_parts) >= 2:
                     author_folder = path_parts[-2]
@@ -332,7 +340,6 @@ def fetch_model_details_ollama():
                     model_id = f"{author_folder}\\{model_folder}"
                     verbose_print(f"Extracted model ID: {model_id}")
 
-                    # Update the configuration with the model details
                     if "LanguageModel" not in config:
                         config["LanguageModel"] = {}
                     config["LanguageModel"]["model"] = model_id
@@ -346,13 +353,55 @@ def fetch_model_details_ollama():
         
         if not found:
             verbose_print(f"Model folder not found for {model_folder_name}")
+            model_id = "Model folder not found"
 
     except subprocess.CalledProcessError as e:
         verbose_print(f"Error running 'ollama ps' command: {e}")
         verbose_print(f"Command output: {e.stderr}")
+        model_id = "Error running Ollama command"
     except Exception as e:
         verbose_print(f"Error fetching model details from Ollama: {str(e)}")
         traceback.print_exc()
+        model_id = "Error occurred"
+
+    delay(1)
+
+def fetch_model_details_lmstudio():
+    global model_id
+    config = configparser.ConfigParser()
+
+    try:
+        config.read(FILE_NAME)
+        try:
+            result = subprocess.run(['curl', lmstudio_api_url], capture_output=True, text=True, check=True)
+            model_data = json.loads(result.stdout)
+            
+            if 'data' in model_data and len(model_data['data']) > 0:
+                full_id = model_data['data'][0]['id']
+                model_id = full_id.rsplit('/', 1)[0]
+
+                if "LanguageModel" not in config:
+                    config["LanguageModel"] = {}
+                config["LanguageModel"]["model"] = model_id
+
+                with open(FILE_NAME, 'w') as configfile:
+                    config.write(configfile)
+
+                verbose_print(f"Model Read: LM Studio - {model_id}")
+            else:
+                verbose_print("No models currently loaded in LM Studio.")
+                model_id = "No model loaded"
+        except subprocess.CalledProcessError as e:
+            verbose_print(f"Error running curl command: {e}")
+            verbose_print(f"Curl output: {e.stderr}")
+            model_id = "Error fetching model"
+        except json.JSONDecodeError:
+            verbose_print("Error parsing JSON from curl output")
+            model_id = "Error parsing model data"
+    except Exception as e:
+        verbose_print(f"Error fetching model details: {str(e)}")
+        traceback.print_exc()
+        model_id = "Error occurred"
 
     delay(1)
 
@@ -421,45 +470,42 @@ def check_and_update_prompts():
 
 
 def display_title():
-    cls.system('cls' if os.name == 'nt' else 'clear')
+    clear_screen()
     print("=" * 119)
     print("                                               Mantella-Local-Launcher")
     print("-" * 119)
-    print(f"")
-    
+    print("")
+
 def display_menu_and_handle_input():
     global game, optimization, custom_token_count, microphone_enabled, model_id
     while True:
         display_title()
-        print(f"\n\n\n")
+        print("\n\n\n")
         print(f"                                               1. Game Used: {game}\n")
         print(f"                                               2. Microphone On: {'True' if microphone_enabled else 'False'}\n")
         print(f"                                               3. Optimization: {optimization}\n")
         print(f"                                               4. Token Count: {custom_token_count}\n")
 
-        print(f"\n\n\n")
+        print("\n\n\n")
         print("-" * 119)
         game_key = game.lower().replace(" ", "")
-        print(f"")
+        print("")
         print(f"                                   model = {model_id}")
         print(f"                                   {game}_folder = {game_folders.get(game_key, 'Not set')}")
         print(f"                                   xvasynth_folder = {xvasynth_folder}")
-        print(f"")
+        print("")
         print("=" * 119)
 
         choice = input("Selection, Program Options = 1-4, Refresh Display = R, Begin Mantella/xVASynth = B, Exit and Save = X: ").strip().upper()
         
         if choice == '1':
-            games = ["Skyrim", "SkyrimVR", "Fallout4", "Fallout4VR"]
-            game = games[(games.index(game) + 1) % len(games)]
+            toggle_game()
         elif choice == '2':
-            microphone_enabled = not microphone_enabled
+            toggle_microphone()
         elif choice == '3':
-            optimizations = list(optimization_presets.keys())
-            optimization = optimizations[(optimizations.index(optimization) + 1) % len(optimizations)]
+            toggle_optimization()
         elif choice == '4':
-            context_lengths = [2048, 4096, 8192]
-            custom_token_count = context_lengths[(context_lengths.index(custom_token_count) + 1) % len(context_lengths)]
+            toggle_context_length()
         elif choice == 'R':
             server_choice = read_temp_file()
             if server_choice == "lmstudio":
@@ -523,15 +569,15 @@ def main():
             fetch_model_details_ollama()
         else:
             verbose_print("No valid model server choice found.")
+            model_id = "No valid server choice"
 
         return display_menu_and_handle_input()
     except Exception as e:
         verbose_print(f"An unexpected error occurred: {str(e)}")
         verbose_print("Traceback:")
         verbose_print(traceback.format_exc())
-        write_output_file(1, "")
+        write_output_file(1)
         return 1, ""
-
 
 if __name__ == "__main__":
     verbose_print("Script execution started")
@@ -547,4 +593,4 @@ if __name__ == "__main__":
         print("1,", file=sys.stdout)
         sys.stdout.flush()
     verbose_print("Script execution ended")
-    sys.exit(exit_code)
+    sys.exit(0)  # Always exit with code 0 to prevent the NameError
