@@ -1,4 +1,4 @@
-# Script: .\main-wt.p
+# Script: .\launcher.py
 
 # Imports
 import os, sys, time, shutil, traceback, subprocess  # Common Imports
@@ -480,32 +480,35 @@ def display_menu_and_handle_input():
     global game, optimization, custom_token_count, microphone_enabled, model_id
     while True:
         display_title()
-        print("\n\n\n")
+        print(f"\n\n\n")
         print(f"                                               1. Game Used: {game}\n")
         print(f"                                               2. Microphone On: {'True' if microphone_enabled else 'False'}\n")
         print(f"                                               3. Optimization: {optimization}\n")
         print(f"                                               4. Token Count: {custom_token_count}\n")
 
-        print("\n\n\n")
+        print(f"\n\n\n")
         print("-" * 119)
         game_key = game.lower().replace(" ", "")
-        print("")
+        print(f"")
         print(f"                                   model = {model_id}")
         print(f"                                   {game}_folder = {game_folders.get(game_key, 'Not set')}")
         print(f"                                   xvasynth_folder = {xvasynth_folder}")
-        print("")
+        print(f"")
         print("=" * 119)
 
         choice = input("Selection, Program Options = 1-4, Refresh Display = R, Begin Mantella/xVASynth = B, Exit and Save = X: ").strip().upper()
         
         if choice == '1':
-            toggle_game()
+            games = ["Skyrim", "SkyrimVR", "Fallout4", "Fallout4VR"]
+            game = games[(games.index(game) + 1) % len(games)]
         elif choice == '2':
-            toggle_microphone()
+            microphone_enabled = not microphone_enabled
         elif choice == '3':
-            toggle_optimization()
+            optimizations = list(optimization_presets.keys())
+            optimization = optimizations[(optimizations.index(optimization) + 1) % len(optimizations)]
         elif choice == '4':
-            toggle_context_length()
+            context_lengths = [2048, 4096, 8192]
+            custom_token_count = context_lengths[(context_lengths.index(custom_token_count) + 1) % len(context_lengths)]
         elif choice == 'R':
             server_choice = read_temp_file()
             if server_choice == "lmstudio":
@@ -533,27 +536,6 @@ def display_menu_and_handle_input():
             verbose_print("Invalid selection. Please try again.")
         
         delay()
-
-def toggle_game():
-    verbose_print("Toggling game...")
-    global game
-    games = ["Skyrim", "SkyrimVR", "Fallout4", "Fallout4VR"]
-    game = games[(games.index(game) + 1) % len(games)]
-    delay()
-
-def toggle_optimization():
-    verbose_print("Toggling optimization...")
-    global optimization
-    optimizations = list(optimization_presets.keys())
-    optimization = optimizations[(optimizations.index(optimization) + 1) % len(optimizations)]
-    delay()
-
-def toggle_context_length():
-    verbose_print("Toggling context length...")
-    global custom_token_count
-    context_lengths = [2048, 4096, 8192]
-    custom_token_count = context_lengths[(context_lengths.index(custom_token_count) + 1) % len(context_lengths)]
-    delay()
 
 def main():
     verbose_print("Entering main function")
