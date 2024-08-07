@@ -131,6 +131,7 @@ Quality: max_tokens = 200, max_response_sentences = 3, temperature = 0.6
 - No GPT/Online support! Despite loving GPT for other things, GPT will always be filtered response, despite being fast. I cant see it being used when there are local models able to produce SFW AND NSFW contents in one model and process text, I consider, Fallout4 and Skyrim, to be *Ahem* Offline Games with a little tweaking, unless you have like of achievements otherwise known as character profiling. 
 
 # Development
+- Character sheet must be backed up, and then backup must be used to dynamically in relevance to the context size chosen, be filtered to contain, 2048 = 1 sentences, 4096 = 2 sentences, 8192 = 4 sentences, context lengths should be either, 2048, 4096, 8192, I dont see any popular RP models for 16384, apart from book-writing.   
 - Now have skyrim again, and will be able to test/auto-optimize the character sheets based on context for, skyrim and fallout.
 - Complete Mantella-WT-0.11.4.5.1 then re-brand and process into exe, upload to nexus. Ollama has no curl model folder/name request, I am trying things.
 - Its looking likely, I have determined how to correctly process the character files pre-launce, to the context, and thus, no modified game files are required for deployment, this then becomes the launcher. so the forked files would be gone. it would become a standalone exe, it will be put on, Github repository and nexus, as Mantella-Launcher.
