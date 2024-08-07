@@ -129,13 +129,10 @@ Quality: max_tokens = 200, max_response_sentences = 3, temperature = 0.6
 - this project will not replace the impressive new configuration interface coming in v12, but as a result of my launcher the user will probably just use that the first time.
 - a Llama 3 Q3_m model with fallout 4 dlc & ~300 mods including PhyOp performance texture pack, utilizes all of the 8GB on a single card, if you want to use =>Q4 and/or hd textures, then I suggest 10-12GB free VRam or, sharing processing with the cpu. If you need more VRam, try the "PhyOp" Performance/Regular Textures on Nexus, ensure it loads after things like, for example, CBBE and BodyTalk.
 - No GPT/Online support! Despite loving GPT for other things, GPT will always be filtered response, despite being fast. I cant see it being used when there are local models able to produce SFW AND NSFW contents in one model and process text, I consider, Fallout4 and Skyrim, to be *Ahem* Offline Games with a little tweaking, unless you have like of achievements otherwise known as character profiling. 
-- Possibly requires advance of my project for utilizing llama.cpp pre-compiled binaries for vulkan, to host models with OhLlama/LmStudio compatibility for apps, as they are not utilizing threads properly or vulkan at all, currently.
 
 # Development
 - Now have skyrim again, and will be able to test/auto-optimize the character sheets based on context for, skyrim and fallout.
-- Need to add back the, "Forgiven" and "Offended", parts to the prompts, and re-write them in process, make them concise. Currently the convo just about works on q3.
-- Complete Mantella-WT-0.11.4.5.1 then re-brand and process into exe, upload to nexus.
-Ollama has no curl model folder/name request, I am trying things, apparently
+- Complete Mantella-WT-0.11.4.5.1 then re-brand and process into exe, upload to nexus. Ollama has no curl model folder/name request, I am trying things.
 - Its looking likely, I have determined how to correctly process the character files pre-launce, to the context, and thus, no modified game files are required for deployment, this then becomes the launcher. so the forked files would be gone. it would become a standalone exe, it will be put on, Github repository and nexus, as Mantella-Launcher.
 1. last thing from the original outline: develop my program to standardize the character csv files, it needs to generate 3 files, 1/2/3 sentence versions, that will be used, relevantly and dynamically, with the context lengths of, 2048, 4096, 8192. What would be simpler is, I could rename the files, ie "gamename_characters.bak", then process it according to the current context settings for context, and over-write any existing csv file in the same dir, so as, to not need a bunch of modifications to, 3 scripts to make them dynamic.
 2. Ollama does not have a curl requires, but we know it running or not by "ollama.exe". From command "Ollama Ps", we can find this...
