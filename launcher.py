@@ -212,7 +212,26 @@ def write_output_file(exit_code):
     except Exception as e:
         verbose_print(f"Error writing output file: {str(e)}")
 
-def fetch_model_details():
+def read_temp_file():
+    """Reads the temp-wt.txt file to determine which model server to use."""
+    verbose_print("Reading Model Server Choice...")
+    server_choice = None
+
+    try:
+        with open(OUTPUT_FILE, 'r') as f:
+            for line in f:
+                if line.startswith("service="):
+                    server_choice = line.split("=")[1].strip()
+                    break
+        verbose_print(f"Model server choice: {server_choice}")
+    except FileNotFoundError:
+        verbose_print(f"Temporary file '{OUTPUT_FILE}' not found.")
+    except Exception as e:
+        verbose_print(f"Error reading temporary file: {str(e)}")
+
+    return server_choice
+
+def fetch_model_details_lmstudio():
     """Fetch the model details from LM Studio using curl."""
     global model_id
     config = configparser.ConfigParser()
@@ -236,11 +255,11 @@ def fetch_model_details():
                 if "LanguageModel" not in config:
                     config["LanguageModel"] = {}
                 config["LanguageModel"]["model"] = model_id
-                
+
                 with open(FILE_NAME, 'w') as configfile:
                     config.write(configfile)
 
-                verbose_print(f"Model Read: LM Studio")
+                verbose_print(f"Model Read: LM Studio - {model_id}")
                 delay(1)
             else:
                 verbose_print("No models currently loaded in LM Studio.")
@@ -252,6 +271,87 @@ def fetch_model_details():
 
     except Exception as e:
         verbose_print(f"Error fetching model details: {str(e)}")
+        traceback.print_exc()
+
+    delay(1)
+
+def fetch_model_details_ollama():
+    """Fetch the model details from Ollama."""
+    global model_id
+    config = configparser.ConfigParser()
+
+    try:
+        config.read(FILE_NAME)
+
+        # Run ollama ps command and capture output
+        result = subprocess.run(['ollama', 'ps'], capture_output=True, text=True, check=True)
+
+        # Filter out error messages but keep all other output
+        output_lines = result.stdout.strip().split('\n')
+        filtered_output = '\n'.join([line for line in output_lines if not line.startswith("failed to get console mode")])
+
+        # Filter out error messages
+        lines = [line for line in filtered_output.splitlines() if not line.startswith("failed to get console mode")]
+
+        if len(lines) < 2:
+            verbose_print("No models currently loaded in Ollama.")
+            return
+
+        # Extract model name from the second line (first model listed)
+        model_line = lines[1]
+        verbose_print(f"Model line: {model_line}")
+
+        model_parts = model_line.split()
+        if len(model_parts) < 1:
+            verbose_print(f"Unexpected format in 'ollama ps' output: {model_line}")
+            return
+
+        model_name = model_parts[0].split(':')[0]  # Get the part before ':' if it exists
+        verbose_print(f"Detected model name: {model_name}")
+
+        # Define a mapping or transformation if needed
+        # For example, if the detected model name needs to be transformed
+        model_folder_name = model_name.replace("IQ3_M-imat", "GGUF-IQ-Imatrix")  # Transform name if needed
+
+        # Prompt for drive letter
+        drive_letter = input("Enter the drive letter where your models are stored (e.g., C, D, E): ").upper()
+
+        # Search for the model folder
+        found = False  # Track if the folder was found
+        for root, dirs, files in os.walk(f"{drive_letter}:\\"):
+            verbose_print(f"Searching in directory: {root}")  # Debug output for current directory
+            if model_folder_name in dirs:
+                full_path = os.path.join(root, model_folder_name)
+                verbose_print(f"Found model folder: {full_path}")
+
+                # Extract AuthorFolderName and ModelFolderName
+                path_parts = full_path.split(os.path.sep)
+                if len(path_parts) >= 2:
+                    author_folder = path_parts[-2]
+                    model_folder = path_parts[-1]
+                    model_id = f"{author_folder}\\{model_folder}"
+                    verbose_print(f"Extracted model ID: {model_id}")
+
+                    # Update the configuration with the model details
+                    if "LanguageModel" not in config:
+                        config["LanguageModel"] = {}
+                    config["LanguageModel"]["model"] = model_id
+
+                    with open(FILE_NAME, 'w') as configfile:
+                        config.write(configfile)
+
+                    verbose_print(f"Model Read: Ollama - {model_id}")
+                    found = True
+                    break
+        
+        if not found:
+            verbose_print(f"Model folder not found for {model_folder_name}")
+
+    except subprocess.CalledProcessError as e:
+        verbose_print(f"Error running 'ollama ps' command: {e}")
+        verbose_print(f"Command output: {e.stderr}")
+    except Exception as e:
+        verbose_print(f"Error fetching model details from Ollama: {str(e)}")
         traceback.print_exc()
 
     delay(1)
@@ -321,14 +421,14 @@ def check_and_update_prompts():
 
 
 def display_title():
-    os.system('cls' if os.name == 'nt' else 'clear')
+    cls.system('cls' if os.name == 'nt' else 'clear')
     print("=" * 119)
     print("                                               Mantella-Local-Launcher")
     print("-" * 119)
     print(f"")
     
 def display_menu_and_handle_input():
-    global game, optimization, custom_token_count, microphone_enabled
+    global game, optimization, custom_token_count, microphone_enabled, model_id
     while True:
         display_title()
         print(f"\n\n\n")
@@ -361,7 +461,11 @@ def display_menu_and_handle_input():
             context_lengths = [2048, 4096, 8192]
             custom_token_count = context_lengths[(context_lengths.index(custom_token_count) + 1) % len(context_lengths)]
         elif choice == 'R':
-            fetch_model_details()
+            server_choice = read_temp_file()
+            if server_choice == "lmstudio":
+                fetch_model_details_lmstudio()
+            elif server_choice == "ollama":
+                fetch_model_details_ollama()
             continue
         elif choice == 'B':
             display_title()
@@ -411,7 +515,15 @@ def main():
         clean_config()
         check_and_update_prompts()
         read_config()
-        fetch_model_details()
+
+        server_choice = read_temp_file()
+        if server_choice == "lmstudio":
+            fetch_model_details_lmstudio()
+        elif server_choice == "ollama":
+            fetch_model_details_ollama()
+        else:
+            verbose_print("No valid model server choice found.")
+
         return display_menu_and_handle_input()
     except Exception as e:
         verbose_print(f"An unexpected error occurred: {str(e)}")
@@ -419,6 +531,7 @@ def main():
         verbose_print(traceback.format_exc())
         write_output_file(1, "")
         return 1, ""
+
 
 if __name__ == "__main__":
     verbose_print("Script execution started")
