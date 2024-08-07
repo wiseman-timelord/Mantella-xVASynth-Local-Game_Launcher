@@ -146,4 +146,4 @@ qwen2_57b:latest        9dbf41c98d9e    48 GB   100% CPU        4 minutes from n
 
 
 # Disclaimer
-- To be detailed.
+This software is subject to the terms in License.Txt, covering usage, distribution, and modifications. For full details on your rights and obligations, refer to License.Txt.
