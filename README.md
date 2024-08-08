@@ -2,7 +2,7 @@
 Status: Working, now on v12 too in next update v0.08.
 
 ### Description
-- a Windows Launcher/Optimizer for Mantella for, Fallout 4 and Skyrim, with models locally on Windows. I found Mantella was optimized for 8K on GPT, so, Mantella-Local-Launcher instead optimizes Mantella for Local Models. The script facilitates pre-launch, configuration management and optimization, launches, xVASynth and your chosen game, if they are not already running, then it launches Mantella, by making use of the settings already present in `config.ini`, so you do still need to configure that first. Mantella-Local-Launcher also performs various tasks such as, cleaning configuration files and optimizing the mantella prompts. The Batch file manages the, communication between and launching, of the relevant programs/scripts, while the Python component of the script handles the heavy work, and displays an interactive menu for user selection of game and optimization options. The project is local only, so, gpt/online, compatibility and optimization, remains untested.
+- a Windows Launcher/Optimizer for Mantella for, Fallout 4 and Skyrim, with models locally on Windows. I found Mantella was optimized for 8K on GPT, so, Mantella-Local-Launcher instead optimizes Mantella for Local Models. The script facilitates pre-launch, configuration management and optimization, launches, xVASynth and your chosen game, if they are not already running, then it launches Mantella, by making use of the settings already present in `config.ini`, so you do still need to configure that first. Mantella-Local-Launcher also performs various tasks such as, cleaning configuration files and optimizing the mantella prompts. The Batch file manages the, communication between and launching, of the relevant programs/scripts, while the Python component of the script handles the heavy work, and displays an interactive menu for user selection of game and optimization options. The project is local only, so, gpt/online, compatibility and optimization, remains untested. 
 
 ### Features
 1. **Batch Launcher for Automation**: Automates and runs xVASynth and Mantella with admin privileges.
@@ -11,7 +11,8 @@ Status: Working, now on v12 too in next update v0.08.
 4. **Interactive Python Script**: Cleans configuration files and offers an interactive menu for game and preset choices.
 5. **Error Handling and Logging**: Tracks errors, logs execution, and backs up configuration files.
 6. **Automatic Execution and Exit Handling**: If not already running, then runs, Fallout 4 and/or xVASynth, and then continues to Mantella for smooth operation.
-7. **LM Studio / Ollama Support **: Switch models to similar one with different name, and it is handled by the launcher in `config.ini`. 
+7. **LM Studio / Ollama Support **: Switch models to similar one with different name, and it is handled by the launcher in `config.ini`.
+8. **Auto-Optimize Prompts**: Prompts are upgraded/streamlined, character sheets will be optimized based on context, but that part is still being worked on. 
 
 ### Preview
 - The menu of much simplified optimization...
