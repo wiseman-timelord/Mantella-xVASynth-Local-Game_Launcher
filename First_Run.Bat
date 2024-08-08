@@ -61,8 +61,8 @@ if defined config_folder (
     ) else (
         copy /y "%config_folder%\config.ini" "%config_folder%\config.bak"
         echo File Backed Up: config.ini ^> config.bak
+        echo Backup File: %config_folder%\config.bak
     )
-    echo Backup File: %config_folder%\config.bak
     timeout /t 2 >nul
 ) else (
     echo Error: No configuration file found.
@@ -70,20 +70,24 @@ if defined config_folder (
     timeout /t 5 >nul
     goto :end_of_file
 )
+echo.
 
 :: After Requirements.
 if "%mantella_version%"=="v11.4" (
     echo After First_Run Exits...
     echo 1. Ensure to configure %config_file%.
     echo 2. Run Launcher.Bat.
+    echo.
     timeout /t 2 >nul
     echo Exit Sequence In 10 Seconds...
+    echo.
     timeout /t 10 >nul
     goto end_of_file
 ) else if "%mantella_version%"=="v12" (
     echo 1. Exit Mantella After "Waiting for player to select an NPC...
     echo 2. Ensure to configure %config_file%.
     echo 3. Run Launcher.Bat.
+    echo.
     timeout /t 2 >nul
     echo.
     echo Running Mantella In 10 Seconds...
