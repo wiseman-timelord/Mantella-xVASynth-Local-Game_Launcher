@@ -1,4 +1,4 @@
-# Mantella-Local-Launcher for [v11.4](https://github.com/art-from-the-machine/Mantella/releases/tag/v0.11.4).
+# Mantella-Local-Launcher for [Mantella v11.4](https://github.com/art-from-the-machine/Mantella/releases/tag/v0.11.4)
 Status: Reverted to previous version, release is working.
 
 ### Description
