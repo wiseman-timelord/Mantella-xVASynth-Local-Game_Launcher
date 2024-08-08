@@ -100,13 +100,13 @@ Waiting for player to select an NPC...
 ```
 
 ## Requirements
-3. **Powerful Computer**: Running Fallout 4/Skyrim and interference on models can be intensive.
-1. **Python Environment**: Requires Python 3.11 and dependencies from the Mantella requirements file.
-2. **Language Model**: Use [Lewdiculous L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix](https://huggingface.co/Lewdiculous/L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix). Have, 4GB VRam Free for Q3 or 6GB VRam free for Q4. 
-3. **Operating System**: Compatible with Windows 7 through Windows 11; administrative privileges may be needed.
-4. **xVASynth Installation**: Must be installed and correctly configured in the specified directory.
-5. **Configuration File**: Requires a `config.ini` with `Game`, `Paths`, and `LanguageModel.Advanced` sections.
-6. **LM Studio**: Obtain model folder/name and foolproofs api config, Mantella-WT will not work on, Ollama or GPT.
+1. **Powerful Computer**: Running Fallout 4/Skyrim and interference on models can be intensive.
+2. **Python Environment**: Requires Python 3.11 and dependencies from the Mantella requirements file.
+3. **Language Model**: Use [Lewdiculous L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix](https://huggingface.co/Lewdiculous/L3-8B-Stheno-v3.2-GGUF-IQ-Imatrix). Have, 4GB VRam Free for Q3 or 6GB VRam free for Q4. 
+4. **Operating System**: Compatible with Windows 7 through Windows 11; administrative privileges may be needed.
+5. **xVASynth Installation**: Must be installed and correctly configured in the specified directory.
+6. **Configuration File**: Requires a `config.ini` with `Game`, `Paths`, and `LanguageModel.Advanced` sections.
+7. **LM Studio or Ollama**: Obtain model folder/name and foolproofs api config, Mantella-Local-Launcer will not work on non-local model host services.
 
 # Usage / Install
 1. Ensure the [Mantella Mod](https://www.nexusmods.com/fallout4/mods/79747) is installed for Fallout/Skyrim from the Nexus mods site, follow the guide, this will, at some point, require install [Mantella 11.4](https://github.com/art-from-the-machine/Mantella/releases/tag/v0.11.4) to a suitable directory.
