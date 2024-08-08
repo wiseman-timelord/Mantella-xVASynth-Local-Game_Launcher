@@ -15,7 +15,6 @@ echo.
 echo Working Dir: %ScriptDirectoryWt%
 timeout /t 1 >nul
 
-
 :: Check for administrative privileges
 net session >nul 2>&1
 if %errorLevel% NEQ 0 (
@@ -35,6 +34,41 @@ if not exist ".\config.bak" (
     timeout /t 2 >nul
 )
 echo Note: 'config.bak' Retains Instructions.
+
+:: Load configuration from multiple locations
+set "config_file="
+
+:: Path 1: User's Documents folder
+set "userDocumentsPath=%USERPROFILE%\Documents\My Games\Mantella\config.ini"
+if exist "%userDocumentsPath%" (
+    set "config_file=%userDocumentsPath%"
+)
+
+:: Path 2: Game directory
+if not defined config_file if exist ".\config.ini" (
+    set "config_file=.\config.ini"
+)
+
+:: Path 3: Any drive's Documents folder
+if not defined config_file (
+    for %%d in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
+        if exist "%%d:\Documents\My Games\Mantella\config.ini" (
+            set "config_file=%%d:\Documents\My Games\Mantella\config.ini"
+            goto :ConfigFound
+        )
+    )
+)
+
+:ConfigFound
+if defined config_file (
+    echo Config Loaded: %config_file%
+    timeout /t 1 >nul
+) else (
+    echo Error: No configuration file found.
+    echo Please ensure a config.ini exists in one of the expected locations.
+    timeout /t 3 >nul
+    goto :eof
+)
 
 :: Check if LM Studio or Ollama is running, act appropriately.
 tasklist /FI "IMAGENAME eq LM Studio.exe" 2>NUL | find /I /N "LM Studio.exe" >NUL
@@ -58,12 +92,12 @@ if "%LM_RUNNING%"=="1" (
         timeout /t 3 >nul
         goto :eof
     ) else (
-        echo service=lmstudio > temp-wt.txt
+        echo service=lmstudio > .\data\temporary_batch.txt
         echo LM Studio Status: Running
         timeout /t 1 >nul
     )
 ) else if "%OLLAMA_RUNNING%"=="1" (
-    echo service=ollama > temp-wt.txt
+    echo service=ollama > .\data\temporary_batch.txt
     echo Ollama Status: Running
     timeout /t 1 >nul    
 ) else (
@@ -79,14 +113,14 @@ python launcher.py
 echo ...Mantella-Local-Launcher Closed.
 timeout /t 1 >nul
 
-:: Read the output values from temp-wt.txt
-for /f "tokens=1,2 delims==" %%i in (temp-wt.txt) do (
+:: Read the output values from .\data\temporary_batch.txt
+for /f "tokens=1,2 delims==" %%i in (.\data\temporary_batch.txt) do (
     if "%%i"=="exit_code" set exit_code=%%j
     if "%%i"=="xvasynth_folder" set xvasynth_folder=%%j
     if "%%i"=="game" set game=%%j
     if "%%i"=="game_folder" set game_folder=%%j
 )
-echo Read File: temp-wt.txt
+echo Read File: .\data\temporary_batch.txt
 timeout /t 1 >nul
 if "%exit_code%" equ "1" (
     echo Exit and Save Complete. 
@@ -120,9 +154,9 @@ if "%game%"=="Fallout4" (
 tasklist /FI "IMAGENAME eq %game_exe%" 2>NUL | find /I /N "%game_exe%">NUL
 if "%ERRORLEVEL%" NEQ "0" (
     echo %game_exe% is not running. Starting %game%...
-    if exist "%game_folder%\%game_exe%" (
+    if exist "%game_folder%\%game_se%" (
         pushd "%game_folder%"
-        echo Found %game_exe%, running %game_se%.
+        echo Found and Running, %game_se%.
         timeout /t 1 >nul
         powershell -Command "Start-Process '%game_folder%\%game_se%' -NoNewWindow"
         popd
@@ -166,8 +200,8 @@ timeout /t 1 >nul
 
 :eof
 :: Exit Program
-del .\temp-wt.txt
-echo File Deleted: temp-wt.txt
+del .\.\data\temporary_batch.txt
+echo File Deleted: .\data\temporary_batch.txt
 timeout /t 1 >nul
 pushd "%ScriptDirectoryWt%"
 echo Closing in 5 seconds...

@@ -6,7 +6,7 @@ import configparser, json  # Config/Json Related
 
 # Global variables
 FILE_NAME = 'config.ini'
-OUTPUT_FILE = '.\\data\\settings_temporary.txt'
+OUTPUT_FILE = '.\\data\\temporary_batch.txt'
 game = "Skyrim"
 optimization = "Default"
 game_folders = {}
@@ -16,6 +16,11 @@ model_id = ""
 custom_token_count = 8192    # Default value
 lmstudio_api_url = "http://localhost:1234/v1/models"
 microphone_enabled = False
+FILE_NAME = 'config.ini'
+DEFAULT_FILE_PATHS = [
+    FILE_NAME,
+    os.path.join(os.environ.get('USERPROFILE', ''), 'Documents', 'My Games', 'Mantella', FILE_NAME)
+]
 
 # Initialization
 def verbose_print(message):
@@ -38,6 +43,37 @@ optimization_presets = {
     "Regular": {"max_tokens": 150, "max_response_sentences": 2, "temperature": 0.5},
     "Quality": {"max_tokens": 200, "max_response_sentences": 3, "temperature": 0.6}
 }
+
+def get_or_set_models_drive():
+    json_file_path = os.path.join("data", "temporary_launcher.json")
+    
+    # Ensure the data directory exists
+    os.makedirs(os.path.dirname(json_file_path), exist_ok=True)
+    
+    try:
+        # Try to read the existing JSON file
+        with open(json_file_path, 'r') as f:
+            data = json.load(f)
+            models_drive_letter = data.get('models_drive_letter')
+        
+        if models_drive_letter:
+            verbose_print(f"Using saved models drive: {models_drive_letter}")
+            return models_drive_letter
+    except FileNotFoundError:
+        verbose_print("No saved models drive found.")
+    except json.JSONDecodeError:
+        verbose_print("Error reading JSON file. Will create a new one.")
+    
+    # If we couldn't get the drive letter from the file, ask the user
+    models_drive_letter = input("Enter the drive letter where your models are stored (e.g., C, D, E): ").upper()
+    
+    # Save the drive letter to the JSON file
+    with open(json_file_path, 'w') as f:
+        json.dump({'models_drive_letter': models_drive_letter}, f)
+    
+    verbose_print(f"Saved models drive: {models_drive_letter}")
+    return models_drive_letter
+
 
 def clean_config():
     verbose_print("Starting config cleaning...")
@@ -92,48 +128,32 @@ def clean_config():
         verbose_print(f"Error writing config: {str(e)}")
         delay(3)
 
-def get_or_set_models_drive():
-    json_file_path = os.path.join("data", "settings_persistent.json")
-    
-    # Ensure the data directory exists
-    os.makedirs(os.path.dirname(json_file_path), exist_ok=True)
-    
-    try:
-        # Try to read the existing JSON file
-        with open(json_file_path, 'r') as f:
-            data = json.load(f)
-            models_drive_letter = data.get('models_drive_letter')
-        
-        if models_drive_letter:
-            verbose_print(f"Using saved models drive: {models_drive_letter}")
-            return models_drive_letter
-    except FileNotFoundError:
-        verbose_print("No saved models drive found.")
-    except json.JSONDecodeError:
-        verbose_print("Error reading JSON file. Will create a new one.")
-    
-    # If we couldn't get the drive letter from the file, ask the user
-    models_drive_letter = input("Enter the drive letter where your models are stored (e.g., C, D, E): ").upper()
-    
-    # Save the drive letter to the JSON file
-    with open(json_file_path, 'w') as f:
-        json.dump({'models_drive_letter': models_drive_letter}, f)
-    
-    verbose_print(f"Saved models drive: {models_drive_letter}")
-    return models_drive_letter
+def find_config_file():
+    """Finds the config file in potential directories."""
+    for path in DEFAULT_FILE_PATHS:
+        if os.path.exists(path):
+            return path
+    return None
 
 def read_config():
     verbose_print("Reading config file...")
     global game, optimization, custom_token_count, game_folders, mod_folders, xvasynth_folder, microphone_enabled
     config = configparser.ConfigParser()
 
-    try:
-        config.read(FILE_NAME)
-    except configparser.Error as e:
-        verbose_print(f"Error reading config.ini file: {str(e)}")
-        delay(3)
+    # Find the config file path
+    config_path = find_config_file()
+    if config_path:
+        try:
+            config.read(config_path)
+        except configparser.Error as e:
+            verbose_print(f"Error reading config.ini file: {str(e)}")
+            delay(3)
+            return
+    else:
+        verbose_print("No config file found. Using default settings.")
+        delay(2)
         return
-    
+
     # Get the game name
     game = config.get("Game", "game", fallback="Skyrim")
 
@@ -147,7 +167,7 @@ def read_config():
 
     mod_folders = {
         "skyrim": config.get("Paths", "skyrim_mod_folder", fallback="Not set"),
-        "skyrimvr": config.get("Paths", "skyrimvr_mod_folder", fallback="Not set"),
+        "skyrimvr": config.get("Paths", "skyrim_mod_folder", fallback="Not set"),
         "fallout4": config.get("Paths", "fallout4_mod_folder", fallback="Not set"),
         "fallout4vr": config.get("Paths", "fallout4vr_mod_folder", fallback="Not set"),
     }
@@ -157,16 +177,18 @@ def read_config():
 
     # Fetch Language Model settings
     custom_token_count = int(config.get("LanguageModel.Advanced", "custom_token_count", fallback="2048"))
-    
+
     # Check for optimization preset
     max_tokens = int(config.get("LanguageModel.Advanced", "max_tokens", fallback="250"))
     max_response_sentences = int(config.get("LanguageModel", "max_response_sentences", fallback="999"))
     temperature = float(config.get("LanguageModel.Advanced", "temperature", fallback="1.0"))
 
     for preset, values in optimization_presets.items():
-        if (max_tokens == values["max_tokens"] and
-            max_response_sentences == values["max_response_sentences"] and
-            abs(temperature - values["temperature"]) < 0.01):
+        if (
+            max_tokens == values["max_tokens"]
+            and max_response_sentences == values["max_response_sentences"]
+            and abs(temperature - values["temperature"]) < 0.01
+        ):
             optimization = preset
             break
     else:
@@ -245,7 +267,7 @@ def write_output_file(exit_code):
         verbose_print(f"Error writing output file: {str(e)}")
 
 def read_temp_file():
-    """Reads the .\data\settings_temporary.txt file to determine which model server to use."""
+    """Reads the .\data\temporary_batch.txt file to determine which model server to use."""
     verbose_print("Reading Model Server Choice...")
     server_choice = None
 
@@ -264,7 +286,7 @@ def read_temp_file():
     return server_choice
 
 def get_or_set_models_drive():
-    json_file_path = os.path.join("data", "settings_persistent.json")
+    json_file_path = os.path.join("data", "temporary_launcher.json")
     
     # Ensure the data directory exists
     os.makedirs(os.path.dirname(json_file_path), exist_ok=True)
@@ -417,19 +439,19 @@ def check_and_update_prompts():
     ]
 
     updated_prompts = {
-        "skyrim_prompt": "You are {name} from Skyrim. this is your background: {bio}, stay in character. You are having a conversation with the Player, in {location} and in Skyrim and at {time_group} time. The situation so far is... {conversation_summary}. In, {language} and a maximum of 100 text characters, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
+        "skyrim_prompt": "You are {name} from Skyrim. this is your background: {bio}, stay in character. You are having a conversation with the Player, in {location} and in Skyrim and at {time_group} time. The situation so far is... {conversation_summary}. In, {language} and a maximum of 100 tokens, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
         
-        "skyrim_multi_npc_prompt": "The following is a conversation between, {names} from Skyrim and the Player, in {location} and at {time_group} time. Their backgrounds are: {bios}, utilize all NPC characters and stay in character. Their conversation histories: {conversation_summaries}. In, {language} and a maximum of 150  text characters, respond in multiple sentences as {names}, ensuring 1 sentence response from each of them. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
+        "skyrim_multi_npc_prompt": "The following is a conversation between, {names} from Skyrim and the Player, in {location} and at {time_group} time. Their backgrounds are: {bios}, utilize all characters and stay in character. Their conversation histories: {conversation_summaries}. In, {language} and a maximum of 150 tokens, respond in multiple sentences as {names}, ensuring 1 sentence response from each of them. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
         
-        "fallout4_prompt": "You are {name} from Fallout 4, this is your background: {bio}, stay in character. You're having a conversation with the Player in {location}. The time is {time_group} time. The situation so far is... {conversation_summary}. In, {language} and a maximum of 100 text characters, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
+        "fallout4_prompt": "You are {name} from Fallout 4, this is your background: {bio}, stay in character. You're having a conversation with the Player in {location}. The time is {time_group} time. The situation so far is... {conversation_summary}. In, {language} and a maximum of 100 tokens, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
         
-        "fallout4_multi_npc_prompt": "The following is a conversation between, {names} from Fallout 4 and the Player, in {location} and at {time_group} time. Their backgrounds are: {bios}, utilize all NPC characters and stay in character. Their conversation histories: {conversation_summaries}. In, {language} and a maximum of 150  text characters, respond in multiple sentences as {names}, ensuring 1 sentence response from each of them. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
+        "fallout4_multi_npc_prompt": "The following is a conversation between, {names} from Fallout 4 and the Player, in {location} and at {time_group} time. Their backgrounds are: {bios}, utilize all characters and stay in character. Their conversation histories: {conversation_summaries}. In, {language} and a maximum of 150 tokens, respond in multiple sentences as {names}, ensuring 1 sentence response from each of them. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
         
-        "radiant_start_prompt": "Start or continue, a conversation relevant to, {name} and the Player and {game}, skip past any greetings. In, {language} and a maximum of 150 text characters, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
+        "radiant_start_prompt": "Start or continue, a conversation relevant to, {name} and the Player and {game}, skip past any greetings. In, {language} and a maximum of 150 tokens, respond in 2 sentences as {name}, ensuring, 1 response sentence and 1 statement sentence. If the Player, offends or apologises or convinces to follow, either or both, of {names}, then the relevant individuals should start with relevantly, 'Offended:' or 'Forgiven:' or 'Follow:'. The response will be spoken aloud, so keep response concise, and remember speech ONLY, do not use, symbols such as asterisks or describe actions, in your output.",
         
-        "radiant_end_prompt": "In, {language} and a maximum of 100 text characters, wrap up the current topic naturally. No need for formal goodbyes as no one is leaving. Keep the summary concise, and remember narration ONLY, do not use, symbols such as asterisks or describe actions, in your output.", 
+        "radiant_end_prompt": "In, {language} and a maximum of 100 tokens, wrap up the current topic naturally. No need for formal goodbyes as no one is leaving. Keep the summary concise, and remember narration ONLY, do not use, symbols such as asterisks or describe actions, in your output.", 
         
-        "memory_prompt": "In, {language} and a maximum of 200 text characters, summarize the conversation between, {name} and the Player and other NPCs present, capturing the essence of in-game events. Ignore communication mix-ups like mishearings. Keep the summary concise, and remember narration ONLY, do not use, symbols such as asterisks or describe actions, in your output.", 
+        "memory_prompt": "In, {language} and a maximum of 200 tokens, summarize the conversation between, {name} and the Player and other NPCs present, capturing the essence of in-game events. Ignore communication mix-ups like mishearings. Keep the summary concise, and remember narration ONLY, do not use, symbols such as asterisks or describe actions, in your output.", 
         
         "resummarize_prompt": "In {language} and with a maximum of 500 text characters and in single short paragraphs, summarize the conversation history between {name} (assistant) and the Player (user)/others in {game}. Each paragraph is a separate conversation. Keep the summary concise, and remember narration ONLY, do not use, symbols such as asterisks or describe actions, in your output."
     }
@@ -521,7 +543,7 @@ def display_menu_and_handle_input():
             write_config()
             verbose_print("Saved File: config.ini")
             write_output_file(0)
-            verbose_print("Saved File: .\data\settings_temporary.txt")
+            verbose_print("Saved File: .\data\temporary_batch.txt")
             verbose_print("Exiting, then Running Mantella/xVASynth...")
             return 0, xvasynth_folder
         elif choice == 'X':
@@ -529,7 +551,7 @@ def display_menu_and_handle_input():
             write_config()
             verbose_print("Saved File: config.ini")
             write_output_file(1)
-            verbose_print("Saved File: .\data\settings_temporary.txt")
+            verbose_print("Saved File: .\data\temporary_batch.txt")
             verbose_print("Exiting Launcher/Optimizer...") 
             return 1, xvasynth_folder
         else:
@@ -576,3 +598,21 @@ if __name__ == "__main__":
         sys.stdout.flush()
     verbose_print("Script execution ended")
     sys.exit(0)  # Always exit with code 0 to prevent the NameError
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
