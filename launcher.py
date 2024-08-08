@@ -6,7 +6,7 @@ import configparser, json  # Config/Json Related
 
 # Global variables
 FILE_NAME = 'config.ini'
-OUTPUT_FILE = '.\\data\\temporary_batch.txt'
+OUTPUT_FILE = '.\\data\\settings_temporary.txt'
 game = "Skyrim"
 optimization = "Default"
 game_folders = {}
@@ -245,7 +245,7 @@ def write_output_file(exit_code):
         verbose_print(f"Error writing output file: {str(e)}")
 
 def read_temp_file():
-    """Reads the .\data\temporary_batch.txt file to determine which model server to use."""
+    """Reads the .\data\settings_temporary.txt file to determine which model server to use."""
     verbose_print("Reading Model Server Choice...")
     server_choice = None
 
@@ -521,7 +521,7 @@ def display_menu_and_handle_input():
             write_config()
             verbose_print("Saved File: config.ini")
             write_output_file(0)
-            verbose_print("Saved File: .\data\temporary_batch.txt")
+            verbose_print("Saved File: .\data\settings_temporary.txt")
             verbose_print("Exiting, then Running Mantella/xVASynth...")
             return 0, xvasynth_folder
         elif choice == 'X':
@@ -529,7 +529,7 @@ def display_menu_and_handle_input():
             write_config()
             verbose_print("Saved File: config.ini")
             write_output_file(1)
-            verbose_print("Saved File: .\data\temporary_batch.txt")
+            verbose_print("Saved File: .\data\settings_temporary.txt")
             verbose_print("Exiting Launcher/Optimizer...") 
             return 1, xvasynth_folder
         else:
