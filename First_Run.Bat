@@ -54,16 +54,21 @@ timeout /t 2 >nul
 
 :: Backup Config
 if defined config_folder (
-	echo Config File: %config_folder%\config.ini
-	copy /y "%config_folder%\config.ini" "%config_folder%\config.bak"
-    echo File Backed Up: config.ini ^> config.bak
-	echo Backup File: %config_folder%\config.bak
+    echo Config File: %config_folder%\config.ini
+    if exist "%config_folder%\config.bak" (
+        echo Backup Already Exists: %config_folder%\config.bak
+        timeout /t 5 >nul
+    ) else (
+        copy /y "%config_folder%\config.ini" "%config_folder%\config.bak"
+        echo File Backed Up: config.ini ^> config.bak
+    )
+    echo Backup File: %config_folder%\config.bak
     timeout /t 2 >nul
 ) else (
     echo Error: No configuration file found.
     echo Please ensure a config.ini exists in one of the expected locations.
     timeout /t 5 >nul
-    goto : end_of_file
+    goto :end_of_file
 )
 
 :: After Requirements.
