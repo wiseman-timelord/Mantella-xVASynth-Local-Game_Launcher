@@ -9,7 +9,7 @@ pushd "%ScriptDirectoryWt%"
 :: Display Is Reset
 cls
 echo ========================================================================================================================
-echo                                                 Mantella-Local-Launcher
+echo                                        Mantella-Local-Launcher For Mantella v11.4
 echo ------------------------------------------------------------------------------------------------------------------------
 echo.
 echo Working Dir: %ScriptDirectoryWt%
