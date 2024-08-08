@@ -6,16 +6,6 @@ set "ScriptDirectoryWt=%~dp0"
 set "ScriptDirectoryWt=%ScriptDirectoryWt:~0,-1%"
 pushd "%ScriptDirectoryWt%"
 
-:: Display Is Reset
-cls
-echo ========================================================================================================================
-echo                                        Mantella-Local-Launcher For Mantella v11.4
-echo ------------------------------------------------------------------------------------------------------------------------
-echo.
-echo Working Dir: %ScriptDirectoryWt%
-timeout /t 1 >nul
-
-
 :: Check for administrative privileges
 net session >nul 2>&1
 if %errorLevel% NEQ 0 (
@@ -26,35 +16,28 @@ if %errorLevel% NEQ 0 (
 )
 echo Admin Status: Administrator 
 
-:: First run check and requirement installation
-if not exist ".\config.bak" (
-    echo First Run, Fool-Proofing Mantella..
-    timeout /t 1 >nul
-    pip install -r requirements.txt
-    echo ..Requirements Installed ^(Hopefully^).
-    timeout /t 2 >nul
-)
-echo Note: 'config.bak' Retains Instructions.
+:: CheckDir
+echo Working Dir: %ScriptDirectoryWt%
+timeout /t 1 >nul
 
-:: Load configuration from multiple locations
-set "config_file="
+:: Find Config & Version
 if exist ".\config.ini" (
-    set "config_file=.\config.ini"
-) else if exist "%USERPROFILE%\Documents\Mantella\config.ini" (
-    set "config_file=%USERPROFILE%\Documents\Mantella\config.ini"
-) else if exist "C:\Mantella\config.ini" (
-    set "config_file=C:\Mantella\config.ini"
-)
-
-if defined config_file (
-    echo Config Loaded: %config_file%
-    timeout /t 1 >nul
+    set "mantella_version=v11.4"
+    timeout /t 2 >nul
+) else if exist "%USERPROFILE%\Documents\My Games\Mantella\config.ini" (
+    set "mantella_version=v12"
 ) else (
-    echo Error: No configuration file found.
-    echo Please ensure a config.ini exists in one of the expected locations.
-    timeout /t 3 >nul
-    goto :eof
+    echo File Missing: config.ini
+    echo.
+	timeout /t 3 >nul	
 )
+	
+:: Display Is Reset
+cls
+echo ========================================================================================================================
+echo                                                  Mantella-Local-Launcher %mantella_version%
+echo ------------------------------------------------------------------------------------------------------------------------
+echo.
 
 :: Check if LM Studio or Ollama is running, act appropriately.
 tasklist /FI "IMAGENAME eq LM Studio.exe" 2>NUL | find /I /N "LM Studio.exe" >NUL
@@ -186,10 +169,10 @@ timeout /t 1 >nul
 
 :eof
 :: Exit Program
-del .\.\data\temporary_batch.txt
+del .\data\temporary_batch.txt
 echo File Deleted: .\data\temporary_batch.txt
 timeout /t 1 >nul
 pushd "%ScriptDirectoryWt%"
 echo Closing in 5 seconds...
-timeout /t 15 >nul
+timeout /t 5 >nul
 exit /b

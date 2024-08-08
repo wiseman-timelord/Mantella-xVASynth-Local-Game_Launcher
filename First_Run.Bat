@@ -24,19 +24,15 @@ timeout /t 1 >nul
 if exist ".\config.ini" (
     set "mantella_version=v11.4"
     set "config_folder=.\"
-    echo.
-    timeout /t 2 >nul
 ) else if exist "%USERPROFILE%\Documents\My Games\Mantella\config.ini" (
     set "mantella_version=v12"
     set "config_folder=%USERPROFILE%\Documents\My Games\Mantella"
-    echo.
-    timeout /t 2 >nul
 ) else (
     echo Error: File Missing: config.ini
-    timeout /t 2 >nul
+    timeout /t 5 >nul
     goto :end_of_file
 )
-
+	
 :: Display Is Reset
 cls
 echo ========================================================================================================================
