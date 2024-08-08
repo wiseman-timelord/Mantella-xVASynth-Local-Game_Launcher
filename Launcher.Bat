@@ -15,6 +15,7 @@ echo.
 echo Working Dir: %ScriptDirectoryWt%
 timeout /t 1 >nul
 
+
 :: Check for administrative privileges
 net session >nul 2>&1
 if %errorLevel% NEQ 0 (
@@ -37,29 +38,14 @@ echo Note: 'config.bak' Retains Instructions.
 
 :: Load configuration from multiple locations
 set "config_file="
-
-:: Path 1: User's Documents folder
-set "userDocumentsPath=%USERPROFILE%\Documents\My Games\Mantella\config.ini"
-if exist "%userDocumentsPath%" (
-    set "config_file=%userDocumentsPath%"
-)
-
-:: Path 2: Game directory
-if not defined config_file if exist ".\config.ini" (
+if exist ".\config.ini" (
     set "config_file=.\config.ini"
+) else if exist "%USERPROFILE%\Documents\Mantella\config.ini" (
+    set "config_file=%USERPROFILE%\Documents\Mantella\config.ini"
+) else if exist "C:\Mantella\config.ini" (
+    set "config_file=C:\Mantella\config.ini"
 )
 
-:: Path 3: Any drive's Documents folder
-if not defined config_file (
-    for %%d in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
-        if exist "%%d:\Documents\My Games\Mantella\config.ini" (
-            set "config_file=%%d:\Documents\My Games\Mantella\config.ini"
-            goto :ConfigFound
-        )
-    )
-)
-
-:ConfigFound
 if defined config_file (
     echo Config Loaded: %config_file%
     timeout /t 1 >nul
@@ -205,5 +191,5 @@ echo File Deleted: .\data\temporary_batch.txt
 timeout /t 1 >nul
 pushd "%ScriptDirectoryWt%"
 echo Closing in 5 seconds...
-timeout /t 5 >nul
+timeout /t 15 >nul
 exit /b
