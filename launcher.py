@@ -93,7 +93,7 @@ def clean_config():
         delay(3)
 
 def get_or_set_models_drive():
-    json_file_path = os.path.join("data", "temporary_launcher.json")
+    json_file_path = os.path.join("data", "settings_persistent.json")
     
     # Ensure the data directory exists
     os.makedirs(os.path.dirname(json_file_path), exist_ok=True)
@@ -264,7 +264,7 @@ def read_temp_file():
     return server_choice
 
 def get_or_set_models_drive():
-    json_file_path = os.path.join("data", "temporary_launcher.json")
+    json_file_path = os.path.join("data", "settings_persistent.json")
     
     # Ensure the data directory exists
     os.makedirs(os.path.dirname(json_file_path), exist_ok=True)
