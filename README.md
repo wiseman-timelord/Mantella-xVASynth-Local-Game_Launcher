@@ -1,5 +1,5 @@
 # Mantella-Local-Launcher for [Mantella 11.4](https://github.com/art-from-the-machine/Mantella/releases/tag/v0.11.4).
-Status: I broke the only release, in an over-confident update, effects of working on 2 versions at once, it will be fixed today.
+Status: Reverted to previous version, release is working.
 
 ### Description
 - a Windows Launcher/Optimizer for Mantella 11.4 for, Fallout 4 and Skyrim, with models locally on Windows. I found Mantella was optimized for 8K on GPT, so, Mantella-Local-Launcher instead optimizes Mantella for Local Models. The script facilitates pre-launch, configuration management and optimization, launches, xVASynth and your chosen game, if they are not already running, then it launches Mantella, by making use of the settings already present in `config.ini`, so you do still need to configure that first. Mantella-Local-Launcher also performs various tasks such as, cleaning configuration files and optimizing the mantella prompts. The Batch file manages the, communication between and launching, of the relevant programs/scripts, while the Python component of the script handles the heavy work, and displays an interactive menu for user selection of game and optimization options. The project is local only, so, gpt/online, compatibility and optimization, remains untested.
