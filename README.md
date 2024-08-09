@@ -136,7 +136,21 @@ You are, to requirement, an AI, role-player and text processor, you will be inst
 
 # Development
 - to do dynamic processing of characters.csv, to match the context length option, though for now this controls the context length saved in the config.ini file.
-- For v12, need to ensure the config.ini have the "skyrim_folder" and "fallout4_folder", to be auto added from the relvant default registry keys for those games, it will have to look in several locations.
+- For v12 compatibility, there are not the keys "fallout4_folder" and "skyrim_Folder", need to ensure the launcher understands how many keys it will be retrieving. the solution is to use similar code to what is in the batch to detect what version of mantella is running...
+```
+if exist ".\config.ini" (
+    set "mantella_version=v11.4"
+    set "config_folder=.\"
+) else if exist "%USERPROFILE%\Documents\My Games\Mantella\config.ini" (
+    set "mantella_version=v12"
+    set "config_folder=%USERPROFILE%\Documents\My Games\Mantella"
+) else (
+    echo Error: File Missing: config.ini
+    timeout /t 5 >nul
+    goto :end_of_file
+)
+```
+...then just dont run fallout 4 in v12, however, later on I will implement the proper way to do it would be the registry keys, this would however take extra making sures, and system backups, I dont want to have to reinstall..
 - Next version is merge of Batch and Python scripts, pushin batch into the python script, its turning out complicated, but is mostly there, and optimized to 500 lines, I expect that to grow to 550-600 before everything is fixed. 
 - Ensure the launcher is future proof, by having alternate method to update the relevant config prompts, this will involve acceesing the new config scripts, there are multiple look in the src folder.
 - Character sheet must be backed up  "gamename_characters.bak", and then backup must be used to dynamically in relevance to the context size chosen, be filtered to contain, 2048 = 1 sentences, 4096 = 2 sentences, 8192 = 4 sentences, context lengths should be either, 2048, 4096, 8192, process the gamename_characters.csv according to the current context settings for context, and over-write any existing csv file. 
