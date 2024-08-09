@@ -112,7 +112,7 @@ Waiting for player to select an NPC...
 # Usage / Install
 1. Ensure the [Mantella Mod](https://www.nexusmods.com/fallout4/mods/79747) is installed for Fallout/Skyrim from the Nexus mods site, follow the guide, this will, at some point, require install [Mantella 11.4](https://github.com/art-from-the-machine/Mantella/releases/tag/v0.11.4) to a suitable directory.
 2. After completing Mantella 11.4 install, then download the [Latest Release](https://github.com/wiseman-timelord/Mantella-Local-Launcher/releases) of the launcher, and copy the file(S) to the main Mantella folder, preserving any folders.
-4. Ensure you have, LM Studio or Ollama, loaded and configured and serving, and ensure to offload a suitable number of layers to the GPU depending upon free VRAM.
+4. Ensure you have, LM Studio or Ollama, loaded and configured and serving, and ensure to offload a suitable number of layers to the GPU depending upon free VRAM. It would be optimal to utilize the System Prompt in your Language Model Local Server, as is shown in the notes section below.
 5. Configure the ".\config.ini", ensure you have entered things like, "fallout4_folder" and "fallout4_mod_folder" and "llm_api" and "tts_service".
 6. Run `Mantella-Local-Launcher.Bat` batch, the "config.ini" will be cleaned/backup, and then you will be presented with the menu, the launcher / optimizer will do the rest with a little fun interaction.
 - Hopefully you have, Admin rights and sensible system settings, but click allow on firewall as required, I am guessing its the interaction between Mantella and the Mantella Mod.
@@ -124,6 +124,10 @@ Default: max_tokens = 250, max_response_sentences = 999, temperature = 1
 Faster: max_tokens = 100,max_response_sentences = 1, temperature = 0.4
 Medium: max_tokens = 150, max_response_sentences = 2, temperature = 0.5
 Quality: max_tokens = 200, max_response_sentences = 3, temperature = 0.6
+```
+- The System Prompt on your Model Server, should be something like...
+```
+You are, to requirement, an AI, role-player and text processor, you will be instructed to either be, roleplaying with the Player/NPCs.
 ```
 - If you are using one graphics card for, game and model, then ensure to use nVidia/Amd control panels to monitor free ram when fallout 4 is running, the amount of free space with small additional amount for runnings, determines what size of model you will be using.
 - a Llama 3 Q3_m model with fallout 4 dlc & ~300 mods including PhyOp performance texture pack, utilizes all of the 8GB on a single card, if you want to use =>Q4 and/or hd textures, then 12GB GPU is suggested, or maybe you have heard of things like PhyOp AI Enhanced Textures.
