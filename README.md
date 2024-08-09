@@ -136,7 +136,7 @@ You are, to requirement, an AI, role-player and text processor, you will be inst
 
 # Development
 - to do dynamic processing of characters.csv, to match the context length option, though for now this controls the context length saved in the config.ini file.
-
+- For v12, need to ensure the config.ini have the "skyrim_folder" and "fallout4_folder", to be auto added from the relvant default registry keys for those games, it will have to look in several locations.
 - Next version is merge of Batch and Python scripts, pushin batch into the python script, its turning out complicated, but is mostly there, and optimized to 500 lines, I expect that to grow to 550-600 before everything is fixed. 
 - Ensure the launcher is future proof, by having alternate method to update the relevant config prompts, this will involve acceesing the new config scripts, there are multiple look in the src folder.
 - Character sheet must be backed up  "gamename_characters.bak", and then backup must be used to dynamically in relevance to the context size chosen, be filtered to contain, 2048 = 1 sentences, 4096 = 2 sentences, 8192 = 4 sentences, context lengths should be either, 2048, 4096, 8192, process the gamename_characters.csv according to the current context settings for context, and over-write any existing csv file. 
